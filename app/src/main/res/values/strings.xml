@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">FlickrFeed</string>
+
+    <string name="title_section1">Search</string>
+    <string name="title_section2">Upload an Image</string>
+    <string name="title_section3">Sign Out</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string-array name = "navItems">
+
+        <item>Search</item>
+        <item>Upload</item>
+        <item>Sign Out</item>
+
+    </string-array>
+
+    <string name="reload">reload</string>
+    <string name="upload">upload</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="title_activity_search">Search</string>
+    <string name="title_activity_upload">Upload</string>
+    <string name="title_activity_signOut">Sign out</string>
+    <string name="title_activity_detail">DetailActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="app_id">794B7BBF</string>
+    <string name="namespace">urn:x-cast:com.google.cast.sample.helloworld</string>
+    <string name="message_to_cast">Message to Cast&#8230;</string>
+    <string name="media_route_menu_title">Play on&#8230;</string>
+    <string name="instructions">Talk to me</string>
+
+</resources>
