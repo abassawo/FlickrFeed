@@ -35,4 +35,8 @@
     <string name="media_route_menu_title">Play on&#8230;</string>
     <string name="instructions">Talk to me</string>
 
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_single_fragment">SingleFragmentActivity</string>
+
 </resources>
