@@ -1,4 +1,6 @@
-package abassawo.c4q.nyc.flickrfeed;
+package abassawo.c4q.nyc.flickrfeed.Model;
+
+import android.net.Uri;
 
 /**
  * Created by c4q-Abass on 10/26/15.
@@ -6,6 +8,9 @@ package abassawo.c4q.nyc.flickrfeed;
 public class GalleryItem {
 
     private String mCaption;
+    private String mOwner;
+    private String mId;
+    private String mUrl;
 
     public String getId() {
         return mId;
@@ -31,8 +36,22 @@ public class GalleryItem {
         mCaption = caption;
     }
 
-    private String mId;
-    private String mUrl;
+    public String getOwner(){
+        return mOwner;
+    }
+
+    public void setOwner(String owner){
+        mOwner = owner;
+    }
+
+    public Uri getPhotoPageuri(){
+        return Uri.parse("http://www.flickr.com/photos/")
+                .buildUpon()
+                .appendPath(mOwner)
+                .appendPath(mId).build();
+    }
+
+
 
     public String toString(){
         return mCaption;

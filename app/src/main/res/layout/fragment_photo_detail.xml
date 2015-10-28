@@ -1,0 +1,25 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="abassawo.c4q.nyc.flickrfeed.Fragments.PhotoDetailFragment">
+
+    <ProgressBar
+        android:id="@+id/fragment_photo_detail_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_alignParentTop="true"
+
+        style="?android:attr/progressBarStyleHorizontal"
+        android:background="?attr/colorPrimary"/>
+
+    <WebView
+        android:layout_below="@+id/fragment_photo_detail_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fragment_photo_detail_webview"
+        android:layout_alignParentBottom="true"
+        ></WebView>
+
+</RelativeLayout>

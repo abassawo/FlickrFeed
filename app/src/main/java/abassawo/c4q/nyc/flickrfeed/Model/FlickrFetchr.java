@@ -1,4 +1,4 @@
-package abassawo.c4q.nyc.flickrfeed;
+package abassawo.c4q.nyc.flickrfeed.Model;
 
 import android.net.Uri;
 import android.util.Log;
@@ -111,6 +111,7 @@ public class FlickrFetchr {
                 continue;
             }
             item.setUrl(photoJsonObject.getString("url_s"));
+            item.setOwner(photoJsonObject.getString("owner"));
             items.add(item);
         }
 
