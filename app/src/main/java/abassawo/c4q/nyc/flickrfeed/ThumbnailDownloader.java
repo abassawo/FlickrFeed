@@ -1,15 +1,15 @@
 package abassawo.c4q.nyc.flickrfeed;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Message;
-import android.util.Log;
+        import android.graphics.Bitmap;
+        import android.graphics.BitmapFactory;
+        import android.os.Handler;
+        import android.os.HandlerThread;
+        import android.os.Message;
+        import android.util.Log;
 
-import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+        import java.io.IOException;
+        import java.util.concurrent.ConcurrentHashMap;
+        import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created by c4q-Abass on 10/27/15.
@@ -55,14 +55,14 @@ public class ThumbnailDownloader<T> extends HandlerThread {
     @Override
     protected void onLooperPrepared() {
         mRequestHandler = new Handler(){
-          @Override
+            @Override
             public void handleMessage(Message msg){
-              if(msg.what == MESSAGE_DOWNLOAD){
-                  T target = (T) msg.obj;
-                  Log.i(TAG, "Got request for URL: " + mRequestMap.get(target));
-                  handleRequest(target);
-              }
-          }
+                if(msg.what == MESSAGE_DOWNLOAD){
+                    T target = (T) msg.obj;
+                    Log.i(TAG, "Got request for URL: " + mRequestMap.get(target));
+                    handleRequest(target);
+                }
+            }
         };
     }
 
@@ -83,7 +83,7 @@ public class ThumbnailDownloader<T> extends HandlerThread {
                 @Override
                 public void run() {
                     if(mRequestMap.get(target) != url){ //verify requestmap. by the time downloader finished downloading,
-                    // rv may have recycled the holder and requestd a different url
+                        // rv may have recycled the holder and requestd a different url
                         //check to make sure each holder gets the correct image, even if another request has been made.
                         return;
                     }

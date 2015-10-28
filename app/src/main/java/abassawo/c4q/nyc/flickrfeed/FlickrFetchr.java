@@ -22,6 +22,15 @@ public class FlickrFetchr {
 
     private static final String API_KEY = "e1eceea6273135d361fa463be7fc8aa0";
     private static final String TAG = "FlickrFetchr.class";
+    private static final String FETCH_RECENTS_METHOD = "flickr.photos.getRecent";
+    private static final String SEARCH_METHOD = "flickr.photos.search";
+    private  static Uri ENDPOINT = Uri.parse("https://api.flickr.com/services/rest/")
+            .buildUpon()
+            .appendQueryParameter("method", "flickr.photos.getRecent")
+            .appendQueryParameter("api_key", API_KEY)
+            .appendQueryParameter("format", "json")
+            .appendQueryParameter("nojsoncallback", "1")
+            .appendQueryParameter("extras", "url_s").build();
 
     public byte[] getUrlBytes(String urlSpec) throws IOException{
         URL url = new URL(urlSpec);
@@ -51,18 +60,28 @@ public class FlickrFetchr {
         return new String(getUrlBytes(urlSpec));
     }
 
-    public  List<GalleryItem> fetchItems(){
+    private String buildUrl(String method, String query){
+        Uri.Builder uriBuilder = ENDPOINT.buildUpon().appendQueryParameter("method", method);
+        if(method.equals(SEARCH_METHOD)){
+            uriBuilder.appendQueryParameter("text", query);
+        }
+        return uriBuilder.build().toString();
+    }
+    public  List<GalleryItem> fetchRecentPhotos(){
+    String url = buildUrl(FETCH_RECENTS_METHOD, null);
+        return downloadGalleryItems(url);
+    }
+
+    public List<GalleryItem> searchPhotos(String query){
+        String url = buildUrl(SEARCH_METHOD, query);
+        return downloadGalleryItems(url);
+    }
+
+    public List<GalleryItem>downloadGalleryItems(String url){
         List<GalleryItem>items = new ArrayList<>();
         try {
-        //Use a Uri builder to build complete url for flickr api request.
-        String url = Uri.parse("https://api.flickr.com/services/rest/")
-                .buildUpon()
-                .appendQueryParameter("method", "flickr.photos.getRecent")
-                .appendQueryParameter("api_key", API_KEY)
-                .appendQueryParameter("format", "json")
-                .appendQueryParameter("nojsoncallback", "1")
-                .appendQueryParameter("extras", "url_s").build().toString();
-                Log.d(TAG + " URL",  url);
+            //Use a Uri builder to build complete url for flickr api request.
+            Log.d(TAG + " URL",  url);
             String jsonString = getUrlString(url);
             Log.i("JSON parsed", "Received JSON: " + jsonString);
 
@@ -76,25 +95,25 @@ public class FlickrFetchr {
         return items;
     }
 
-    public  List<GalleryItem>  fetchRandomItems(){
-        List<GalleryItem>items = new ArrayList<>();
-
-        final String topRandomEndpoint = "https://api.flickr.com/services/feeds/photos_public.gne?format=json&nojsoncallback=1";
-        String jsonString = null;
-        try {
-            jsonString = getUrlString(topRandomEndpoint );
-            JSONObject jsonBody = new JSONObject(jsonString);
-            parseItems(items, jsonBody);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Log.i("JSON parsed", "Received JSON: " + jsonString);
-
-        return items;
-
-    }
+//    public  List<GalleryItem>  fetchRandomItems(){
+//        List<GalleryItem>items = new ArrayList<>();
+//
+//        final String topRandomEndpoint = "https://api.flickr.com/services/feeds/photos_public.gne?format=json&nojsoncallback=1";
+//        String jsonString = null;
+//        try {
+//            jsonString = getUrlString(topRandomEndpoint );
+//            JSONObject jsonBody = new JSONObject(jsonString);
+//            parseItems(items, jsonBody);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        Log.i("JSON parsed", "Received JSON: " + jsonString);
+//
+//        return items;
+//
+//    }
 
     //TODO = Simplify this by using GSON .
 
