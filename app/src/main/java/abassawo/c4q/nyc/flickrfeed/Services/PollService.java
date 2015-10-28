@@ -1,5 +1,6 @@
-package abassawo.c4q.nyc.flickrfeed;
+package abassawo.c4q.nyc.flickrfeed.Services;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
@@ -17,7 +18,11 @@ import android.util.Log;
 
 import java.util.List;
 
-import static android.app.Notification.*;
+import abassawo.c4q.nyc.flickrfeed.Activities.SingleFragmentActivity;
+import abassawo.c4q.nyc.flickrfeed.Model.FlickrFetchr;
+import abassawo.c4q.nyc.flickrfeed.Model.GalleryItem;
+import abassawo.c4q.nyc.flickrfeed.Model.QueryPrefs;
+import abassawo.c4q.nyc.flickrfeed.R;
 
 /**
  * Created by c4q-Abass on 10/28/15.
@@ -25,9 +30,13 @@ import static android.app.Notification.*;
 public class PollService extends IntentService {
 
     private static final String TAG = "PollService";
-    private static final long POLL_INTERVAL = AlarmManager.INTERVAL_HALF_HOUR; //60 secs
-    private static final long POLL_INTERVAL_EXP = 100 * 60; //60 secs
+    private static final long POLL_INTERVAL = AlarmManager.INTERVAL_HALF_HOUR;
+    public static final String ACTION_SHOW_NOTIFICATION = "abassawo.c4q.nyc.flickrfeed.Activities.SingleFragmentActivity.SHOW_NOTIFICATION";
+    public static final String PERM_PRIVATE = "abassawo.c4q.nyc.flickrfeed.Activities.SingleFragmentActivity.PRIVATE";
     private static final int NOTIFICATON_ID = 0;
+
+    public static final String REQUEST_CODE = "REQUEST_CODE";
+    public static final String NOTIFICATION = "NOTIFICATION";
     List<GalleryItem> items;
 
     public static Intent newIntent(Context context){
@@ -79,11 +88,12 @@ public class PollService extends IntentService {
 
         if(isOn){
             Log.d(TAG, "AlarmManager -> PollService Intent");
-            alarmMan.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(), POLL_INTERVAL_EXP, pendingIntent);
+            alarmMan.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(), POLL_INTERVAL, pendingIntent);
         } else {
             alarmMan.cancel(pendingIntent);
             pendingIntent.cancel();
         }
+        QueryPrefs.setAlarmOn(context, isOn);
     }
 
     public static boolean isServiceAlarmOn(Context context){
@@ -107,10 +117,18 @@ public class PollService extends IntentService {
                 .setLargeIcon(flickrIcon)
                 .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(flickrIcon))
                 .setContentIntent(pendingIntent)
-                .setAutoCancel(true).build();
+                .setAutoCancel(false).build();
         NotificationManagerCompat notifier = NotificationManagerCompat.from(this);
-        notifier.notify(NOTIFICATON_ID, notification);
+        showbackgroundNotification(0, notification);
+
     }
 
+    private void showbackgroundNotification(int requestCode, Notification notification) {
+        Intent intent = new Intent(ACTION_SHOW_NOTIFICATION);
+        intent.putExtra(REQUEST_CODE, requestCode);
+        intent.putExtra(NOTIFICATION, notification);
+
+        sendOrderedBroadcast(intent, PERM_PRIVATE, null, null, Activity.RESULT_OK, null, null);
+    }
 
 }

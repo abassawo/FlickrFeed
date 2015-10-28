@@ -1,4 +1,4 @@
-package abassawo.c4q.nyc.flickrfeed;
+package abassawo.c4q.nyc.flickrfeed.Model;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
