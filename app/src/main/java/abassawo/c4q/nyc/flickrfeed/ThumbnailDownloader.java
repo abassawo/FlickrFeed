@@ -1,15 +1,14 @@
 package abassawo.c4q.nyc.flickrfeed;
 
-        import android.graphics.Bitmap;
-        import android.graphics.BitmapFactory;
-        import android.os.Handler;
-        import android.os.HandlerThread;
-        import android.os.Message;
-        import android.util.Log;
-
-        import java.io.IOException;
-        import java.util.concurrent.ConcurrentHashMap;
-        import java.util.concurrent.ConcurrentMap;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
+import android.util.Log;
+import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created by c4q-Abass on 10/27/15.
@@ -66,7 +65,7 @@ public class ThumbnailDownloader<T> extends HandlerThread {
         };
     }
 
-    private void handleRequest(final T target){
+    public void handleRequest(final T target){
         try {
             final String url = mRequestMap.get(target);
             if (url == null) {
@@ -95,5 +94,9 @@ public class ThumbnailDownloader<T> extends HandlerThread {
         }catch(IOException ioe){
             Log.e(TAG, "Error downloading image", ioe);
         }
+    }
+
+    private void notificationRequest(final T target){
+
     }
 }

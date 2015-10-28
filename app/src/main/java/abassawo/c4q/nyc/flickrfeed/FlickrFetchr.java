@@ -2,7 +2,6 @@ package abassawo.c4q.nyc.flickrfeed;
 
 import android.net.Uri;
 import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +23,7 @@ public class FlickrFetchr {
     private static final String TAG = "FlickrFetchr.class";
     private static final String FETCH_RECENTS_METHOD = "flickr.photos.getRecent";
     private static final String SEARCH_METHOD = "flickr.photos.search";
+
     private  static Uri ENDPOINT = Uri.parse("https://api.flickr.com/services/rest/")
             .buildUpon()
             .appendQueryParameter("method", "flickr.photos.getRecent")
@@ -95,27 +95,7 @@ public class FlickrFetchr {
         return items;
     }
 
-//    public  List<GalleryItem>  fetchRandomItems(){
-//        List<GalleryItem>items = new ArrayList<>();
-//
-//        final String topRandomEndpoint = "https://api.flickr.com/services/feeds/photos_public.gne?format=json&nojsoncallback=1";
-//        String jsonString = null;
-//        try {
-//            jsonString = getUrlString(topRandomEndpoint );
-//            JSONObject jsonBody = new JSONObject(jsonString);
-//            parseItems(items, jsonBody);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        Log.i("JSON parsed", "Received JSON: " + jsonString);
-//
-//        return items;
-//
-//    }
 
-    //TODO = Simplify this by using GSON .
 
     private void parseItems(List<GalleryItem> items,JSONObject jsonBody) throws IOException, JSONException{
         JSONObject photosJSONObject = jsonBody.getJSONObject("photos");
@@ -135,4 +115,6 @@ public class FlickrFetchr {
         }
 
     }
+
+
 }
