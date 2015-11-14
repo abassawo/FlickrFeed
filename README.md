@@ -6,7 +6,7 @@ The app pulls most recent images from Flickr's API with support for searching an
 
 
  ![Alt Text](http://i.imgur.com/kxBfTpk.jpg)
- ![o](http://i.imgur.com/iYreQL7.jpg)
+
 
 **Future features:**
 
