@@ -5,7 +5,7 @@ An older project that I recently refactored to improve the threading model and t
 The app pulls most recent images from Flickr's API with support for searching and viewing the image detail in a webview. Background searching for new available images is done using IntentService and Broadcast Receiver.
 
 
- ![FlickrFeed](http://i.imgur.com/kxBfTpk.jpg)
+ ![FlickrFeed](http://i.imgur.com/kxBfTpkl.jpg)
 
 
 **Future features:**
