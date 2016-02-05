@@ -1,4 +1,4 @@
-package abassawo.c4q.nyc.flickrfeed.Activities;
+package abassawo.c4q.nyc.flickrfeed.activities;
 
 
 import android.content.Context;
@@ -9,9 +9,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.WebView;
 
-import abassawo.c4q.nyc.flickrfeed.Fragments.PhotoDetailFragment;
+import abassawo.c4q.nyc.flickrfeed.fragments.PhotoDetailFragment;
 import abassawo.c4q.nyc.flickrfeed.R;
 
 public class WebViewActivity extends SingleFragmentActivity {

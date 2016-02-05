@@ -3,7 +3,7 @@
     package="abassawo.c4q.nyc.flickrfeed" >
 
     <permission
-        android:name="abassawo.c4q.nyc.flickrfeed.Activities.SingleFragmentActivity.PRIVATE"
+        android:name="abassawo.c4q.nyc.flickrfeed.activities.SingleFragmentActivity.PRIVATE"
         android:protectionLevel="signature" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,11 +14,11 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_mustache"
+        android:icon="@mipmap/ic_flickr"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".Activities.SingleFragmentActivity"
+            android:name=".activities.SingleFragmentActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,15 +27,15 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".Services.PollService" />
+        <service android:name=".services.PollService" />
 
-        <receiver android:name=".Receivers.StartupReceiver" >
+        <receiver android:name=".receivers.StartupReceiver" >
             <intent-filter>
                 <action android:name="ANDROID.INTENT.ACTION.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".Receivers.NotificationReceiver"
+            android:name=".receivers.NotificationReceiver"
             android:exported="false" >
             <intent-filter android:priority="-999" >
                 <action android:name="abassawo.c4q.nyc.flickrfeed.SingleFragmentActivity.SHOW_NOTIFICATION" />
@@ -43,7 +43,7 @@
         </receiver>
 
         <activity
-            android:name=".Activities.WebViewActivity"
+            android:name=".activities.WebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_photo_detail_fragment" >
         </activity>

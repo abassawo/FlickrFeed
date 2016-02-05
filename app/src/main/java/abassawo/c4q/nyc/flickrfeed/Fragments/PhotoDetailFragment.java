@@ -1,4 +1,4 @@
-package abassawo.c4q.nyc.flickrfeed.Fragments;
+package abassawo.c4q.nyc.flickrfeed.fragments;
 
 
 

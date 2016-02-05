@@ -1,4 +1,4 @@
-package abassawo.c4q.nyc.flickrfeed.Model;
+package abassawo.c4q.nyc.flickrfeed.model;
 
 import android.net.Uri;
 import android.util.Log;
@@ -14,6 +14,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import abassawo.c4q.nyc.flickrfeed.model.GalleryItem;
+
+
 /**
  * Created by c4q-Abass on 10/26/15.
  */
@@ -23,6 +26,8 @@ public class FlickrFetchr {
     private static final String TAG = "FlickrFetchr.class";
     private static final String FETCH_RECENTS_METHOD = "flickr.photos.getRecent";
     private static final String SEARCH_METHOD = "flickr.photos.search";
+
+
 
     private  static Uri ENDPOINT = Uri.parse("https://api.flickr.com/services/rest/")
             .buildUpon()
@@ -88,7 +93,7 @@ public class FlickrFetchr {
             JSONObject jsonBody = new JSONObject(jsonString);
             parseItems(items, jsonBody);
         } catch (IOException e) {
-            Log.e("Failure", "error parson json", e);
+            Log.e("Failure", "error parsing json", e);
         } catch(JSONException je){
             Log.e(TAG, "Failed to parse JSON", je);
         }

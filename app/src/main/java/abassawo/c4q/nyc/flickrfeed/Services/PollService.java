@@ -1,4 +1,4 @@
-package abassawo.c4q.nyc.flickrfeed.Services;
+package abassawo.c4q.nyc.flickrfeed.services;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -18,11 +18,14 @@ import android.util.Log;
 
 import java.util.List;
 
-import abassawo.c4q.nyc.flickrfeed.Activities.SingleFragmentActivity;
-import abassawo.c4q.nyc.flickrfeed.Model.FlickrFetchr;
-import abassawo.c4q.nyc.flickrfeed.Model.GalleryItem;
-import abassawo.c4q.nyc.flickrfeed.Model.QueryPrefs;
+import abassawo.c4q.nyc.flickrfeed.activities.SingleFragmentActivity;
+import abassawo.c4q.nyc.flickrfeed.model.FlickrFetchr;
+import abassawo.c4q.nyc.flickrfeed.restModel.Flickr;
+import abassawo.c4q.nyc.flickrfeed.model.GalleryItem;
+import abassawo.c4q.nyc.flickrfeed.model.QueryPrefs;
 import abassawo.c4q.nyc.flickrfeed.R;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by c4q-Abass on 10/28/15.
@@ -55,7 +58,7 @@ public class PollService extends IntentService {
         String lastResultId = QueryPrefs.getfLastResultId(this);
 
         if(query == null){
-           items = new FlickrFetchr().fetchRecentPhotos();
+            items = new FlickrFetchr().fetchRecentPhotos();
         } else {
             items = new FlickrFetchr().searchPhotos(query);
         }
@@ -119,7 +122,7 @@ public class PollService extends IntentService {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(false).build();
         NotificationManagerCompat notifier = NotificationManagerCompat.from(this);
-        showbackgroundNotification(0, notification);
+        showbackgroundNotification(NOTIFICATON_ID, notification);
 
     }
 
@@ -127,7 +130,6 @@ public class PollService extends IntentService {
         Intent intent = new Intent(ACTION_SHOW_NOTIFICATION);
         intent.putExtra(REQUEST_CODE, requestCode);
         intent.putExtra(NOTIFICATION, notification);
-
         sendOrderedBroadcast(intent, PERM_PRIVATE, null, null, Activity.RESULT_OK, null, null);
     }
 

@@ -1,6 +1,7 @@
-package abassawo.c4q.nyc.flickrfeed.Fragments;
+package abassawo.c4q.nyc.flickrfeed.fragments;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -22,16 +23,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import abassawo.c4q.nyc.flickrfeed.Activities.WebViewActivity;
-import abassawo.c4q.nyc.flickrfeed.Model.FlickrFetchr;
-import abassawo.c4q.nyc.flickrfeed.Model.GalleryItem;
-import abassawo.c4q.nyc.flickrfeed.Services.PollService;
-import abassawo.c4q.nyc.flickrfeed.Model.QueryPrefs;
+import abassawo.c4q.nyc.flickrfeed.activities.WebViewActivity;
+import abassawo.c4q.nyc.flickrfeed.model.FlickrFetchr;
+import abassawo.c4q.nyc.flickrfeed.restModel.Flickr;
+import abassawo.c4q.nyc.flickrfeed.model.GalleryItem;
+import abassawo.c4q.nyc.flickrfeed.restModel.FlickrService;
+import abassawo.c4q.nyc.flickrfeed.services.PollService;
+import abassawo.c4q.nyc.flickrfeed.model.QueryPrefs;
 import abassawo.c4q.nyc.flickrfeed.R;
-import abassawo.c4q.nyc.flickrfeed.Model.ThumbnailDownloader;
+import abassawo.c4q.nyc.flickrfeed.model.ThumbnailDownloader;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,13 +50,15 @@ public class GalleryFragment extends VisibleFragment {
     private PhotoAdapter mAdapter;
     private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
 
+
     public static GalleryFragment newInstance() {
         return new GalleryFragment();
     }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initThumbnailDL();
+        setHasOptionsMenu(true);
+        //initThumbnailDL();
         updateItems();
 
     }
@@ -65,21 +74,21 @@ public class GalleryFragment extends VisibleFragment {
 
 
 
-    public void initThumbnailDL(){
-        Handler responseHandler = new Handler();
-        mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
-        mThumbnailDownloader.start();
-        mThumbnailDownloader.getLooper();
-        //Cal
-        mThumbnailDownloader.setThumbnailDownloadListener(new ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder>() {
-            @Override
-            public void onThumbnailDownloaded(PhotoHolder holder, Bitmap thumbnail) {
-                Drawable drawable = new BitmapDrawable(getResources(), thumbnail);
-                holder.bindDrawable(drawable);
-            }
-        });
-        Log.i(TAG, "Background thread started");
-    }
+//    public void initThumbnailDL(){
+//        Handler responseHandler = new Handler();
+//        mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
+//        mThumbnailDownloader.start();
+//        mThumbnailDownloader.getLooper();
+//        //Cal
+//        mThumbnailDownloader.setThumbnailDownloadListener(new ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder>() {
+//            @Override
+//            public void onThumbnailDownloaded(PhotoHolder holder, Bitmap thumbnail) {
+//                Drawable drawable = new BitmapDrawable(getResources(), thumbnail);
+//                holder.bindDrawable(drawable);
+//            }
+//        });
+//        Log.i(TAG, "Background thread started");
+//    }
 
     private void updateItems(){
         String query = QueryPrefs.getStoredQuery(getActivity());
@@ -87,12 +96,21 @@ public class GalleryFragment extends VisibleFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        updateItems();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+//        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
         inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
 
         MenuItem toggleItem = menu.findItem(R.id.menu_item_toggle_polling);
         if(PollService.isServiceAlarmOn(getActivity())){
+            toggleItem.setTitle(R.string.stop_polling);
             toggleItem.setTitle(R.string.stop_polling);
         } else {
             toggleItem.setTitle(R.string.start_polling);
@@ -162,6 +180,7 @@ public class GalleryFragment extends VisibleFragment {
     }
 
 
+
     public class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView mItemImageView;
         private GalleryItem mGalleryItem;
@@ -176,8 +195,9 @@ public class GalleryFragment extends VisibleFragment {
             mItemImageView.setImageDrawable(drawable);
         }
 
-        public void bindGalleryItem(GalleryItem item){
+        public void bindGalleryItem(Context context, GalleryItem item){
             mGalleryItem = item;
+            Picasso.with(context).load(mGalleryItem.getUrl()).into(mItemImageView);
         }
 
         @Override
@@ -203,11 +223,14 @@ public class GalleryFragment extends VisibleFragment {
 
         @Override
         public void onBindViewHolder(PhotoHolder holder, int position) {
+//            Drawable placeholder = getResources().getDrawable(R.drawable.default_placeholder);
             GalleryItem item = mGalleryItems.get(position);
-            holder.bindGalleryItem(item);
-            Drawable placeholder = getResources().getDrawable(R.drawable.default_placeholder);
-            holder.bindDrawable(placeholder);
-            mThumbnailDownloader.queueThumbnail(holder, item.getUrl());
+            holder.bindGalleryItem(getActivity(), item);
+
+          //  Picasso.with(this).load(item.getUrl()).in
+           // holder.bindDrawable(item.getUrl());
+
+            //mThumbnailDownloader.queueThumbnail(holder, item.getUrl());
         }
 
         @Override

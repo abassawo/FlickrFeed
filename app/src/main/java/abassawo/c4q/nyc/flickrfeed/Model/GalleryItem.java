@@ -1,15 +1,24 @@
-package abassawo.c4q.nyc.flickrfeed.Model;
+package abassawo.c4q.nyc.flickrfeed.model;
 
 import android.net.Uri;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by c4q-Abass on 10/26/15.
  */
 public class GalleryItem {
 
+    @SerializedName("caption")
     private String mCaption;
+
+    @SerializedName("owner")
     private String mOwner;
+
+    @SerializedName("id")
     private String mId;
+
+    @SerializedName("url")
     private String mUrl;
 
     public String getId() {
@@ -50,7 +59,6 @@ public class GalleryItem {
                 .appendPath(mOwner)
                 .appendPath(mId).build();
     }
-
 
 
     public String toString(){

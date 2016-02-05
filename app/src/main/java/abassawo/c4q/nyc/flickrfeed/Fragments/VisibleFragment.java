@@ -1,4 +1,4 @@
-package abassawo.c4q.nyc.flickrfeed.Fragments;
+package abassawo.c4q.nyc.flickrfeed.fragments;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
-import abassawo.c4q.nyc.flickrfeed.Services.PollService;
+import abassawo.c4q.nyc.flickrfeed.services.PollService;
 
 /**
  * Created by c4q-Abass on 10/28/15.
