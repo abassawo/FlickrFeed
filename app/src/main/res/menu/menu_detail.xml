@@ -2,6 +2,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="abassawo.c4q.nyc.flickrfeed.DetailActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+
+
+    <item android:id="@+id/share_image"
+          android:title="@string/share"
+          app:showAsAction="ifRoom"
+          app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
+
+    <item android:id="@+id/downl_this_image"
+          android:icon="@drawable/ic_action_download"
+          android:title="@string/download"
+          app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/star_this_image"
+          android:icon="@drawable/ic_action_favorite"
+          android:title="@string/add_to_faves"
+          app:showAsAction="never"/>
+
+
 </menu>

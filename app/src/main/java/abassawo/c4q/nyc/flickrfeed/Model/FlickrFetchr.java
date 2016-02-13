@@ -1,5 +1,6 @@
-package abassawo.c4q.nyc.flickrfeed.Model;
+package abassawo.c4q.nyc.flickrfeed.model;
 
+import android.location.Location;
 import android.net.Uri;
 import android.util.Log;
 import org.json.JSONArray;
@@ -14,6 +15,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import abassawo.c4q.nyc.flickrfeed.model.GalleryItem;
+
+
 /**
  * Created by c4q-Abass on 10/26/15.
  */
@@ -24,13 +28,15 @@ public class FlickrFetchr {
     private static final String FETCH_RECENTS_METHOD = "flickr.photos.getRecent";
     private static final String SEARCH_METHOD = "flickr.photos.search";
 
+
     private  static Uri ENDPOINT = Uri.parse("https://api.flickr.com/services/rest/")
             .buildUpon()
             .appendQueryParameter("method", "flickr.photos.getRecent")
             .appendQueryParameter("api_key", API_KEY)
             .appendQueryParameter("format", "json")
             .appendQueryParameter("nojsoncallback", "1")
-            .appendQueryParameter("extras", "url_s").build();
+            .appendQueryParameter("extras", "url_s, geo").build();
+
 
     public byte[] getUrlBytes(String urlSpec) throws IOException{
         URL url = new URL(urlSpec);
@@ -60,6 +66,13 @@ public class FlickrFetchr {
         return new String(getUrlBytes(urlSpec));
     }
 
+    private String buildUrl(Location location){
+        return ENDPOINT.buildUpon().appendQueryParameter("method", SEARCH_METHOD)
+                .appendQueryParameter("lat", "" + location.getLatitude())
+                .appendQueryParameter("lon", "" + location.getLongitude())
+                .build().toString();
+    }
+
     private String buildUrl(String method, String query){
         Uri.Builder uriBuilder = ENDPOINT.buildUpon().appendQueryParameter("method", method);
         if(method.equals(SEARCH_METHOD)){
@@ -77,6 +90,11 @@ public class FlickrFetchr {
         return downloadGalleryItems(url);
     }
 
+    public List<GalleryItem> searchPhotos(Location location) {
+        String url = buildUrl(location);
+        return downloadGalleryItems(url);
+    }
+
     public List<GalleryItem>downloadGalleryItems(String url){
         List<GalleryItem>items = new ArrayList<>();
         try {
@@ -88,7 +106,7 @@ public class FlickrFetchr {
             JSONObject jsonBody = new JSONObject(jsonString);
             parseItems(items, jsonBody);
         } catch (IOException e) {
-            Log.e("Failure", "error parson json", e);
+            Log.e("Failure", "error parsing json", e);
         } catch(JSONException je){
             Log.e(TAG, "Failed to parse JSON", je);
         }
@@ -112,10 +130,17 @@ public class FlickrFetchr {
             }
             item.setUrl(photoJsonObject.getString("url_s"));
             item.setOwner(photoJsonObject.getString("owner"));
+
+
+            item.setLat(photoJsonObject.getDouble("latitude"));
+
+            item.setLon(photoJsonObject.getDouble("longitude"));
+
             items.add(item);
         }
 
     }
 
 
+   
 }

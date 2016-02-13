@@ -1,4 +1,4 @@
-package abassawo.c4q.nyc.flickrfeed.Receivers;
+package abassawo.c4q.nyc.flickrfeed.receivers;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
-import abassawo.c4q.nyc.flickrfeed.Services.PollService;
+import abassawo.c4q.nyc.flickrfeed.services.PollService;
 
 /**
  * Created by c4q-Abass on 10/28/15.

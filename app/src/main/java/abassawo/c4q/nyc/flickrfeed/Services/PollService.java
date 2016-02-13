@@ -1,4 +1,4 @@
-package abassawo.c4q.nyc.flickrfeed.Services;
+package abassawo.c4q.nyc.flickrfeed.services;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -18,10 +18,10 @@ import android.util.Log;
 
 import java.util.List;
 
-import abassawo.c4q.nyc.flickrfeed.Activities.SingleFragmentActivity;
-import abassawo.c4q.nyc.flickrfeed.Model.FlickrFetchr;
-import abassawo.c4q.nyc.flickrfeed.Model.GalleryItem;
-import abassawo.c4q.nyc.flickrfeed.Model.QueryPrefs;
+import abassawo.c4q.nyc.flickrfeed.activities.MainTabActivity;
+import abassawo.c4q.nyc.flickrfeed.model.FlickrFetchr;
+import abassawo.c4q.nyc.flickrfeed.model.GalleryItem;
+import abassawo.c4q.nyc.flickrfeed.model.QueryPrefs;
 import abassawo.c4q.nyc.flickrfeed.R;
 
 /**
@@ -31,8 +31,8 @@ public class PollService extends IntentService {
 
     private static final String TAG = "PollService";
     private static final long POLL_INTERVAL = AlarmManager.INTERVAL_HALF_HOUR;
-    public static final String ACTION_SHOW_NOTIFICATION = "abassawo.c4q.nyc.flickrfeed.Activities.SingleFragmentActivity.SHOW_NOTIFICATION";
-    public static final String PERM_PRIVATE = "abassawo.c4q.nyc.flickrfeed.Activities.SingleFragmentActivity.PRIVATE";
+    public static final String ACTION_SHOW_NOTIFICATION = "abassawo.c4q.nyc.flickrfeed.Activities.MainTabActivity.SHOW_NOTIFICATION";
+    public static final String PERM_PRIVATE = "abassawo.c4q.nyc.flickrfeed.Activities.MainTabActivity.PRIVATE";
     private static final int NOTIFICATON_ID = 0;
 
     public static final String REQUEST_CODE = "REQUEST_CODE";
@@ -55,7 +55,7 @@ public class PollService extends IntentService {
         String lastResultId = QueryPrefs.getfLastResultId(this);
 
         if(query == null){
-           items = new FlickrFetchr().fetchRecentPhotos();
+            items = new FlickrFetchr().fetchRecentPhotos();
         } else {
             items = new FlickrFetchr().searchPhotos(query);
         }
@@ -104,7 +104,7 @@ public class PollService extends IntentService {
 
     public void deliverUpdateNotifications(){
         Resources resources = getResources();
-        Intent intent = SingleFragmentActivity.newIntent(this);
+        Intent intent = MainTabActivity.newIntent(this);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         Bitmap flickrIcon = BitmapFactory.decodeResource(this.getResources(),
                 R.drawable.flickrlogo);
@@ -119,7 +119,7 @@ public class PollService extends IntentService {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(false).build();
         NotificationManagerCompat notifier = NotificationManagerCompat.from(this);
-        showbackgroundNotification(0, notification);
+        showbackgroundNotification(NOTIFICATON_ID, notification);
 
     }
 
@@ -127,7 +127,6 @@ public class PollService extends IntentService {
         Intent intent = new Intent(ACTION_SHOW_NOTIFICATION);
         intent.putExtra(REQUEST_CODE, requestCode);
         intent.putExtra(NOTIFICATION, notification);
-
         sendOrderedBroadcast(intent, PERM_PRIVATE, null, null, Activity.RESULT_OK, null, null);
     }
 
