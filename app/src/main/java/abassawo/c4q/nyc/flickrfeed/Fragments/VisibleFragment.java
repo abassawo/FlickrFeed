@@ -36,6 +36,7 @@ public class VisibleFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        getActivity().unregisterReceiver(mNotifyReceiver);
     }
 
     private BroadcastReceiver mNotifyReceiver = new BroadcastReceiver() {
@@ -45,6 +46,7 @@ public class VisibleFragment extends Fragment {
             setResultCode(Activity.RESULT_CANCELED);
         }
     };
+
 
 
 

@@ -18,14 +18,11 @@ import android.util.Log;
 
 import java.util.List;
 
-import abassawo.c4q.nyc.flickrfeed.activities.SingleFragmentActivity;
+import abassawo.c4q.nyc.flickrfeed.activities.MainTabActivity;
 import abassawo.c4q.nyc.flickrfeed.model.FlickrFetchr;
-import abassawo.c4q.nyc.flickrfeed.restModel.Flickr;
 import abassawo.c4q.nyc.flickrfeed.model.GalleryItem;
 import abassawo.c4q.nyc.flickrfeed.model.QueryPrefs;
 import abassawo.c4q.nyc.flickrfeed.R;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by c4q-Abass on 10/28/15.
@@ -34,8 +31,8 @@ public class PollService extends IntentService {
 
     private static final String TAG = "PollService";
     private static final long POLL_INTERVAL = AlarmManager.INTERVAL_HALF_HOUR;
-    public static final String ACTION_SHOW_NOTIFICATION = "abassawo.c4q.nyc.flickrfeed.Activities.SingleFragmentActivity.SHOW_NOTIFICATION";
-    public static final String PERM_PRIVATE = "abassawo.c4q.nyc.flickrfeed.Activities.SingleFragmentActivity.PRIVATE";
+    public static final String ACTION_SHOW_NOTIFICATION = "abassawo.c4q.nyc.flickrfeed.Activities.MainTabActivity.SHOW_NOTIFICATION";
+    public static final String PERM_PRIVATE = "abassawo.c4q.nyc.flickrfeed.Activities.MainTabActivity.PRIVATE";
     private static final int NOTIFICATON_ID = 0;
 
     public static final String REQUEST_CODE = "REQUEST_CODE";
@@ -107,7 +104,7 @@ public class PollService extends IntentService {
 
     public void deliverUpdateNotifications(){
         Resources resources = getResources();
-        Intent intent = SingleFragmentActivity.newIntent(this);
+        Intent intent = MainTabActivity.newIntent(this);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         Bitmap flickrIcon = BitmapFactory.decodeResource(this.getResources(),
                 R.drawable.flickrlogo);
