@@ -1,43 +1,44 @@
 package abassawo.c4q.nyc.flickrfeed.fragments;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import abassawo.c4q.nyc.flickrfeed.activities.WebViewActivity;
 import abassawo.c4q.nyc.flickrfeed.model.FlickrFetchr;
 import abassawo.c4q.nyc.flickrfeed.model.GalleryItem;
-import abassawo.c4q.nyc.flickrfeed.services.PollService;
 import abassawo.c4q.nyc.flickrfeed.model.QueryPrefs;
 import abassawo.c4q.nyc.flickrfeed.R;
-import abassawo.c4q.nyc.flickrfeed.model.ThumbnailDownloader;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -47,11 +48,12 @@ public class GalleryFragment extends VisibleFragment {
     public static String TAG = "GalleryFragment";
     private static List<GalleryItem> mItems = new ArrayList<>();
     private PhotoAdapter mAdapter;
-    @Bind(R.id.fragment_photo_gallery_recycer_view)
-    RecyclerView mRecyclerView;
+    @Bind(R.id.fragment_photo_gallery_recycer_view) RecyclerView mRecyclerView;
+    @Bind(R.id.recycler_progress_bar) ProgressBar progressRing;
     private String mQuery;
-   // private OnFragmentinteractionListener mCallback;
-    private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
+    private GalleryItem longClickedItem;
+    private OnFragmentInteractionListener mCallback;
+
 
 
     public static GalleryFragment newInstance() {
@@ -62,20 +64,28 @@ public class GalleryFragment extends VisibleFragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
     }
-//
-//    @Override
-//    public void onAttach(Activity activity) {
-//        super.onAttach(activity);
-//        // This makes sure that the container activity has implemented
-//        // the callback interface. If not, it throws an exception
-//        try {
-//            mCallback = (OnFragmentinteractionListener) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString()
-//                    + " must implement OnFragmentinteractionListener");
-//        }
-//        super.onAttach(activity);
-//    }
+
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentinteractionListener");
+        }
+        super.onAttach(activity);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        PreviewFragment preview =  PreviewFragment.newInstance(longClickedItem);
+        preview.show(getFragmentManager(), TAG);
+    }
 
 
     @Override
@@ -84,13 +94,14 @@ public class GalleryFragment extends VisibleFragment {
         ButterKnife.bind(this, v);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         setupAdapter();
+        registerForContextMenu(mRecyclerView);
         return v;
     }
 
     public void updateItems(String query) {
-        if (isConnectedToInternet()) {
-            //mCallback.setSearchMethod(query);
+        if (isConnectedToInternet()){
             new FetchItemsTask(query).execute();
+
         } else {
             final View view = getActivity().findViewById(R.id.main_container);
             Snackbar.make(view, "Internet is not Connected", Snackbar.LENGTH_INDEFINITE)
@@ -130,6 +141,8 @@ public class GalleryFragment extends VisibleFragment {
             public boolean onMenuItemClick(MenuItem item) {
                 Toast.makeText(getActivity(), "Fetching the latest...", Toast.LENGTH_SHORT).show();
                 mQuery = null;
+                mCallback.onRecentQuery();
+                //queue msg to update tab title to "Random"
                 updateItems(mQuery);
                 return false;
             }
@@ -149,6 +162,7 @@ public class GalleryFragment extends VisibleFragment {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
+                mCallback.onQuerySubmitted(query);
                 search(query);
                 searchView.onActionViewCollapsed();
                 return false;
@@ -167,7 +181,6 @@ public class GalleryFragment extends VisibleFragment {
         Toast.makeText(getActivity(), "Searching " + query, Toast.LENGTH_SHORT).show();
         QueryPrefs.setStoredQuery(getActivity(), query);
         mQuery = query;
-        //mCallback.setSearchMethod(mQuery);
         new FetchItemsTask(mQuery).execute();
     }
 
@@ -187,13 +200,15 @@ public class GalleryFragment extends VisibleFragment {
             mRecyclerView.setAdapter(mAdapter);
         }
     }
-//
-//    public interface OnFragmentinteractionListener {
-//         void setSearchMethod(String query);
-//    }
+
+    public interface OnFragmentInteractionListener {
+        void onQuerySubmitted(String query);
+        void onRecentQuery();
+
+    }
 
 
-    public class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ImageView mItemImageView;
         private GalleryItem mGalleryItem;
 
@@ -209,9 +224,6 @@ public class GalleryFragment extends VisibleFragment {
 
         }
 
-//        public void bindDrawable(Drawable drawable){
-//            mItemImageView.setImageDrawable(drawable);
-//        }
 
         @Override
         public void onClick(View v) {
@@ -219,14 +231,6 @@ public class GalleryFragment extends VisibleFragment {
             i.putExtra(WebViewActivity.INTENT_EXTRA_GALLERY_ITEM, mGalleryItem);
             startActivity(i);
         }
-
-        @Override
-        public boolean onLongClick(View v) {
-            PreviewFragment preview = PreviewFragment.newInstance(mGalleryItem);
-            preview.show(getFragmentManager(), PreviewFragment.TAG);
-            return false;
-        }
-
 
     }
 
@@ -248,9 +252,17 @@ public class GalleryFragment extends VisibleFragment {
         }
 
         @Override
-        public void onBindViewHolder(PhotoHolder holder, int position) {
+        public void onBindViewHolder(final PhotoHolder holder, int position) {
             GalleryItem item = mGalleryItems.get(position);
             holder.bindGalleryItem(mContext, item);
+            holder.itemView.setLongClickable(true);
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    longClickedItem = holder.mGalleryItem;
+                    return false;
+                }
+            });
         }
 
         @Override
@@ -260,25 +272,49 @@ public class GalleryFragment extends VisibleFragment {
 
     }
 
-    public class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
+    public class FetchItemsTask extends AsyncTask<Void, Integer, List<GalleryItem>> {
         private String mQuery;
+        int progress;
 
+
+        @Override
+        protected void onPreExecute() {
+            progressRing.setVisibility(View.VISIBLE);
+            progress = 0;
+        }
 
         public FetchItemsTask(String query) {
             mQuery = query;
         }
 
-        @Override
-        protected List<GalleryItem> doInBackground(Void... params) {
-            if (mQuery == null)
-                return new FlickrFetchr().fetchRecentPhotos();
-            else
-                return new FlickrFetchr().searchPhotos(mQuery);
-
+        public void reportProgress(){
+            while (progress < 100) {
+                progress++;
+                publishProgress(progress);
+            }
         }
 
         @Override
+        protected List<GalleryItem> doInBackground(Void... params) {
+
+                if (mQuery == null) {
+                    reportProgress();
+                    return new FlickrFetchr().fetchRecentPhotos();
+                } else
+                    reportProgress();
+                    return new FlickrFetchr().searchPhotos(mQuery);
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+           progressRing.setProgress(values[0]);
+        }
+
+
+
+        @Override
         protected void onPostExecute(List<GalleryItem> items) {
+            progressRing.setProgress(100);
             mItems = items;
             setupAdapter();
         }

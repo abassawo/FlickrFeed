@@ -3,11 +3,13 @@ package abassawo.c4q.nyc.flickrfeed.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,23 +17,25 @@ import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
-
-
+import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
-import abassawo.c4q.nyc.flickrfeed.fragments.GalleryFragment;
 import abassawo.c4q.nyc.flickrfeed.fragments.PhotoDetailFragment;
 import abassawo.c4q.nyc.flickrfeed.R;
+import abassawo.c4q.nyc.flickrfeed.model.DatabaseHelper;
 import abassawo.c4q.nyc.flickrfeed.model.GalleryItem;
+import abassawo.c4q.nyc.flickrfeed.model.Serializer;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class WebViewActivity extends AppCompatActivity implements PhotoDetailFragment.OnWebViewLoadedListener{
+public class WebViewActivity extends AppCompatActivity implements PhotoDetailFragment.OnWebviewLoaded, View.OnClickListener{
     public static final String INTENT_EXTRA_GALLERY_ITEM ="extra_key_item" ;
     @Bind(R.id.backdrop) ImageView backDrop;
     @Bind(R.id.toolbar) Toolbar mToolbar;
-    public static String INTENT_EXTRA_URL = "url_key";
+    @Bind(R.id.fave_fab)
+    FloatingActionButton faveFab;
     private GalleryItem mItem;
 
 
@@ -46,10 +50,10 @@ public class WebViewActivity extends AppCompatActivity implements PhotoDetailFra
         ButterKnife.bind(this);
         setupActionBar(mToolbar);
         mItem = (GalleryItem) getIntent().getSerializableExtra(INTENT_EXTRA_GALLERY_ITEM);
-        //String url = getIntent().getStringExtra(INTENT_EXTRA_URL);
         String url = mItem.getUrl();
         Picasso.with(this).load(url).into(backDrop);
         loadFragment(getFragment());
+        faveFab.setOnClickListener(this);
     }
 
 
@@ -93,12 +97,9 @@ public class WebViewActivity extends AppCompatActivity implements PhotoDetailFra
     }
 
     public void setupShareMenuItem(MenuItem actionItem ){
-
         ShareActionProvider actionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(actionItem);
         actionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-
-
         shareIntent.putExtra(Intent.EXTRA_STREAM, getIntent().getData());
         shareIntent.setType("image/jpeg");
         actionItem.setIcon(android.R.drawable.ic_menu_share);
@@ -120,5 +121,22 @@ public class WebViewActivity extends AppCompatActivity implements PhotoDetailFra
     public void onWebViewLoaded() {
         backDrop.setAlpha(-1);
         backDrop.setColorFilter(R.color.colorPrimary);
+    }
+
+
+    public void onLikeFabClick(GalleryItem item) {
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Serializer serializer = new Serializer(this, db);
+        serializer.addFavorite((GalleryItem) getIntent().getSerializableExtra(WebViewActivity.INTENT_EXTRA_GALLERY_ITEM));
+        Toast.makeText(this, "Added to Favorites", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.fave_fab: onLikeFabClick(mItem);
+                break;
+        }
     }
 }

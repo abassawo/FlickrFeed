@@ -82,12 +82,16 @@ public class FlickrFetchr {
     }
     public  List<GalleryItem> fetchRecentPhotos(){
     String url = buildUrl(FETCH_RECENTS_METHOD, null);
-        return downloadGalleryItems(url);
+        List items = downloadGalleryItems(url);
+        items.remove(items.size() - 1);
+        return items;
     }
 
     public List<GalleryItem> searchPhotos(String query){
         String url = buildUrl(SEARCH_METHOD, query);
-        return downloadGalleryItems(url);
+        List items = downloadGalleryItems(url);
+        items.remove(items.size() - 1);
+        return items;
     }
 
     public List<GalleryItem> searchPhotos(Location location) {

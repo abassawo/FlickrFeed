@@ -3,7 +3,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/darkPrimaryColor</item>
-        <item name="colorAccent">@color/accent_material_light</item>
+        <item name="colorAccent">@color/alizarin</item>
     <!--<item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
     <item name="android:statusBarColor">@color/soothing_blue</item>
     </style>

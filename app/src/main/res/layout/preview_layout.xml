@@ -1,12 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@android:color/transparent"
+    android:layout_width="100dp"
+    android:layout_height="100dp">
 
     <ImageView
+        android:id="@+id/preview_imageview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/imageview_preview"/>
+        android:layout_centerInParent="true"/>
 
-</LinearLayout>
+
+
+    <LinearLayout
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/preview_fave_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_favorite"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/preview_download_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_download"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>
+
+
+
+

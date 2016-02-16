@@ -118,7 +118,6 @@ public class PollService extends IntentService {
                 .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(flickrIcon))
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(false).build();
-        NotificationManagerCompat notifier = NotificationManagerCompat.from(this);
         showbackgroundNotification(NOTIFICATON_ID, notification);
 
     }

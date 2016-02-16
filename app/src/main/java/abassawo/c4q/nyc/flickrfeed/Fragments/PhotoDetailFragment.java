@@ -6,19 +6,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
@@ -37,30 +34,23 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.ref.WeakReference;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import abassawo.c4q.nyc.flickrfeed.R;
 import abassawo.c4q.nyc.flickrfeed.activities.WebViewActivity;
 import abassawo.c4q.nyc.flickrfeed.model.DatabaseHelper;
-import abassawo.c4q.nyc.flickrfeed.model.FlickrFetchr;
 import abassawo.c4q.nyc.flickrfeed.model.GalleryItem;
 import abassawo.c4q.nyc.flickrfeed.model.Serializer;
-import abassawo.c4q.nyc.flickrfeed.model.restModel.Flickr;
+import abassawo.c4q.nyc.flickrfeed.model.TargetPhoneGallery;
 
 
-public class PhotoDetailFragment extends VisibleFragment {
-    private OnWebViewLoadedListener mCallback;
+public class PhotoDetailFragment extends VisibleFragment  {
+    private OnWebviewLoaded mCallback;
+
+
     @Override
     public void onStart() {
         super.onStart();
@@ -88,7 +78,7 @@ public class PhotoDetailFragment extends VisibleFragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (OnWebViewLoadedListener) activity;
+            mCallback = (OnWebviewLoaded) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnWebViewLoadedListener");
@@ -195,9 +185,12 @@ public class PhotoDetailFragment extends VisibleFragment {
         webView.loadUrl(mUri.toString());
     }
 
-    public interface OnWebViewLoadedListener{
+    public interface OnWebviewLoaded {
         void onWebViewLoaded();
     }
+
+
+
 
 
 
@@ -224,17 +217,17 @@ public class PhotoDetailFragment extends VisibleFragment {
     private void showDownloadDialog() {
         final GalleryItem galleryItem = (GalleryItem) getActivity().getIntent().getSerializableExtra(WebViewActivity.INTENT_EXTRA_GALLERY_ITEM);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Download image ?");
+        builder.setTitle("Download image?");
         builder.setPositiveButton("Download", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 Picasso.with(getActivity()).load(galleryItem.getUrl()).into(new TargetPhoneGallery(getActivity().getContentResolver(), "image name", "image desc"));
-                Toast.makeText(getActivity(), "Image saved to Gallery", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Image saved to Gallery", Toast.LENGTH_SHORT).show();
             }
         });
 
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                // No action - Dismiss.
+                // No action - Dismiss.e
             }
         });
 
@@ -244,39 +237,7 @@ public class PhotoDetailFragment extends VisibleFragment {
 
 
 
-    class TargetPhoneGallery implements Target
-    {
-        private final WeakReference<ContentResolver> resolver;
-        private final String name;
-        private final String desc;
 
-        public TargetPhoneGallery(ContentResolver r, String name, String desc)
-        {
-            this.resolver = new WeakReference<ContentResolver>(r);
-            this.name = name;
-            this.desc = desc;
-        }
-
-        @Override
-        public void onPrepareLoad (Drawable arg0)
-        {
-        }
-
-        @Override
-        public void onBitmapLoaded (Bitmap bitmap, Picasso.LoadedFrom arg1)
-        {
-            ContentResolver r = resolver.get();
-            if (r != null)
-            {
-                MediaStore.Images.Media.insertImage(r, bitmap, name, desc);
-
-            }
-        }
-
-        @Override
-        public void onBitmapFailed (Drawable arg0) {
-        }
-    }
 
 
 

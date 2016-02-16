@@ -1,11 +1,14 @@
 package abassawo.c4q.nyc.flickrfeed.fragments;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,7 +27,7 @@ import butterknife.ButterKnife;
 /**
  * Created by c4q-Abass on 2/12/16.
  */
-public class FavesFragment extends GalleryFragment {
+public class FavesFragment extends GalleryFragment  {
     private GalleryFragment.PhotoAdapter mAdapter;
     @Bind(R.id.fragment_photo_gallery_recycer_view)
     RecyclerView mRecyclerView;
@@ -53,4 +56,5 @@ public class FavesFragment extends GalleryFragment {
             mRecyclerView.setAdapter(mAdapter);
         }
     }
+
 }

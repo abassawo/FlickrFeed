@@ -1,14 +1,21 @@
 package abassawo.c4q.nyc.flickrfeed.fragments;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 
@@ -66,20 +73,31 @@ public class LocatrFragment extends SupportMapFragment {
         mClient.disconnect();
     }
 
-    private void findImage(){
-        Toast.makeText(getActivity(), "Finding Image", Toast.LENGTH_SHORT).show();
-        LocationRequest request = LocationRequest.create();
-        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        request.setNumUpdates(1);
-        request.setInterval(0);
-        LocationServices.FusedLocationApi.requestLocationUpdates(mClient, request, new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                Log.i(TAG, "Got a location: " + location);
-                new AsyncSearch().execute(location);
-            }
+    private void findImage() {
+        if (isConnectedtoGPS()) {
+            Toast.makeText(getActivity(), "Retrieving latest image in vicinity", Toast.LENGTH_SHORT).show();
+            LocationRequest request = LocationRequest.create();
+            request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            request.setNumUpdates(1);
+            request.setInterval(0);
+            LocationServices.FusedLocationApi.requestLocationUpdates(mClient, request, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    Log.i(TAG, "Got a location: " + location);
+                    new AsyncSearch().execute(location);
+                }
 
-        });
+            });
+        } else {
+            final View view = getActivity().findViewById(R.id.main_container);
+            Snackbar.make(view, "GPS is not Connected", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Connect", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    }).show();
+        }
     }
 
     @Override
@@ -109,8 +127,8 @@ public class LocatrFragment extends SupportMapFragment {
         });
     }
 
-    private void updateUI(){
-        if(mMap == null || mMapImage == null){
+    private void updateUI() {
+        if (mMap == null || mMapImage == null) {
             return;
         }
         LatLng itemPoint = new LatLng(mMapItem.getLat(), mMapItem.getLon());
@@ -142,7 +160,7 @@ public class LocatrFragment extends SupportMapFragment {
         inflater.inflate(R.menu.menu_locatr, menu);
         MenuItem searchItem = menu.findItem(R.id.action_locate);
         searchItem.setEnabled(mClient.isConnected());
-        if(searchItem.isEnabled()){
+        if (searchItem.isEnabled()) {
             searchItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -153,12 +171,19 @@ public class LocatrFragment extends SupportMapFragment {
         }
     }
 
+    public boolean isConnectedtoGPS() {
+        final LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+//        ConnectivityManager connMgr = (ConnectivityManager)
+//                getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo wifiInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//        NetworkInfo dataInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+//        return wifiInfo.isConnected() || dataInfo.isConnected();
+
+    }
 
 
-
-
-
-    private class AsyncSearch extends AsyncTask<Location, Void, Void>{
+    private class AsyncSearch extends AsyncTask<Location, Void, Void> {
         private Bitmap mBitmap;
         private GalleryItem mGalleryItem;
         private Location mLocation;
@@ -168,14 +193,14 @@ public class LocatrFragment extends SupportMapFragment {
             mLocation = params[0];
             FlickrFetchr fetchr = new FlickrFetchr();
             List<GalleryItem> items = fetchr.searchPhotos(params[0]);
-            if(items.size() == 0){
+            if (items.size() == 0) {
                 return null;
             }
             mGalleryItem = items.get(0);
-            try{
+            try {
                 byte[] bytes = fetchr.getUrlBytes(mGalleryItem.getUrl());
                 mBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            } catch (IOException ioe){
+            } catch (IOException ioe) {
                 Toast.makeText(getActivity(), "Connection failed", Toast.LENGTH_LONG).show();
                 Log.i(TAG, "Unable to download bitmap", ioe);
             }
