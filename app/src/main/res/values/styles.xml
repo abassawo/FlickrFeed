@@ -5,7 +5,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/darkPrimaryColor</item>
         <item name="colorAccent">@color/alizarin</item>
-
+        <item name="android:windowDisablePreview">true</item>
         <!-- Customize your theme here. -->
     </style>
 

@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
@@ -36,7 +37,7 @@ import abassawo.c4q.nyc.flickrfeed.services.PollService;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainTabActivity extends LocationActivity implements View.OnClickListener, GalleryFragment.OnFragmentInteractionListener {
+public class MainTabActivity extends AppCompatActivity implements View.OnClickListener, GalleryFragment.OnFragmentInteractionListener {
     @Bind(R.id.nav_view) NavigationView navView;
     @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
     @Bind(R.id.toolbar) Toolbar mToolbar;
@@ -83,7 +84,7 @@ public class MainTabActivity extends LocationActivity implements View.OnClickLis
     public void setupViewPager(ViewPager viewPager) {
         adapter = new TabAdapter(getSupportFragmentManager());
         adapter.addFragment(GalleryFragment.newInstance(), "Flickr Feed");
-        adapter.addFragment(LocatrFragment.getInstance(), "Nearby");
+//        adapter.addFragment(LocatrFragment.getInstance(), "Nearby");
         viewPager.setAdapter(adapter);
     }
 
